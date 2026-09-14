@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 import { useInvoiceStore } from '@/hooks/useInvoiceStore';
 import { InvoiceFormData } from '@/utils/types';
 import { isValidAddress } from '@/utils/formatting';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Send, FileText } from 'lucide-react';
 
 export default function CreateInvoice() {
   const router = useRouter();
@@ -25,9 +25,16 @@ export default function CreateInvoice() {
 
   if (!isConnected) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <p className="text-lg text-gray-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="glass-card p-12 text-center max-w-md mx-auto animate-fade-in-up">
+          <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+            style={{ background: 'rgba(245, 158, 11, 0.1)' }}>
+            <AlertCircle size={28} style={{ color: 'var(--accent-warning)' }} />
+          </div>
+          <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            Wallet Required
+          </h2>
+          <p style={{ color: 'var(--text-muted)' }}>
             Please connect your wallet to create an invoice
           </p>
         </div>
@@ -121,38 +128,51 @@ export default function CreateInvoice() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Create Invoice</h1>
-        <p className="text-gray-600 mb-8">
+      <div className="glass-card-static p-8 animate-fade-in-up">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: 'rgba(99, 102, 241, 0.1)' }}>
+            <FileText size={20} style={{ color: 'var(--accent-primary)' }} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              Create Invoice
+            </h1>
+          </div>
+        </div>
+        <p className="mb-8 ml-13" style={{ color: 'var(--text-muted)' }}>
           Generate a new invoice for payment on BOT Chain
         </p>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex gap-3">
-            <AlertCircle className="text-red-600 flex-shrink-0" size={20} />
-            <p className="text-red-800">{error}</p>
+          <div className="mb-6 p-4 rounded-xl flex gap-3"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+            }}>
+            <AlertCircle className="flex-shrink-0" size={20} style={{ color: 'var(--accent-danger)' }} />
+            <p className="text-sm" style={{ color: '#f87171' }}>{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Invoice Number *
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+              Invoice Number <span style={{ color: 'var(--accent-danger)' }}>*</span>
             </label>
             <input
               type="text"
               name="invoiceNumber"
               value={formData.invoiceNumber}
               onChange={handleChange}
-              placeholder="INV-2024-001"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              required
+              placeholder="INV-001"
+              className="input-field"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Client Wallet Address *
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+              Client Wallet Address <span style={{ color: 'var(--accent-danger)' }}>*</span>
             </label>
             <input
               type="text"
@@ -160,33 +180,28 @@ export default function CreateInvoice() {
               value={formData.clientAddress}
               onChange={handleChange}
               placeholder="0x..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono text-sm"
-              required
+              className="input-field font-mono"
             />
-            <p className="text-sm text-gray-500 mt-1">
-              The wallet address that will receive the payment
-            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Description *
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+              Description <span style={{ color: 'var(--accent-danger)' }}>*</span>
             </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="e.g., Development services for Q1 2024"
-              rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              required
+              placeholder="Web development services..."
+              rows={3}
+              className="input-field resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Amount (BOT) *
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+                Amount (BOT) <span style={{ color: 'var(--accent-danger)' }}>*</span>
               </label>
               <input
                 type="number"
@@ -194,42 +209,40 @@ export default function CreateInvoice() {
                 value={formData.amount}
                 onChange={handleChange}
                 placeholder="0.00"
-                step="0.01"
+                step="0.001"
                 min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                required
+                className="input-field"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Due Date *
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+                Due Date <span style={{ color: 'var(--accent-danger)' }}>*</span>
               </label>
               <input
                 type="date"
                 name="dueDate"
                 value={formData.dueDate}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                required
+                className="input-field"
               />
             </div>
           </div>
 
-          <div className="flex gap-4">
+          <div className="pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating...' : 'Create Invoice'}
-            </button>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex-1 bg-gray-100 text-gray-900 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-            >
-              Cancel
+              {loading ? (
+                <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+              ) : (
+                <>
+                  <Send size={18} />
+                  Create Invoice
+                </>
+              )}
             </button>
           </div>
         </form>

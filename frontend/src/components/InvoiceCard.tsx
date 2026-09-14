@@ -4,67 +4,73 @@ import React from 'react';
 import { Invoice } from '@/utils/types';
 import { formatAddress, formatAmount, formatDate, isOverdue } from '@/utils/formatting';
 import Link from 'next/link';
-import { Eye, Download } from 'lucide-react';
+import { Eye, Download, ArrowUpRight } from 'lucide-react';
 
 interface InvoiceCardProps {
   invoice: Invoice;
 }
 
 export const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
-  const statusColors = {
-    draft: 'bg-gray-100 text-gray-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-    paid: 'bg-green-100 text-green-800',
-    overdue: 'bg-red-100 text-red-800',
-  };
-
   const displayStatus = isOverdue(invoice.dueDate, invoice.status)
     ? 'overdue'
     : invoice.status;
 
+  const statusClasses: Record<string, string> = {
+    draft: 'status-badge status-draft',
+    pending: 'status-badge status-pending',
+    paid: 'status-badge status-paid',
+    overdue: 'status-badge status-overdue',
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+    <div className="glass-card p-6">
+      <div className="flex justify-between items-start mb-5">
+        <div className="min-w-0 flex-1 mr-3">
+          <h3 className="text-base font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
             Invoice #{invoice.invoiceNumber}
           </h3>
-          <p className="text-sm text-gray-600">{invoice.description}</p>
+          <p className="text-sm truncate mt-1" style={{ color: 'var(--text-muted)' }}>
+            {invoice.description}
+          </p>
         </div>
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-            statusColors[displayStatus as keyof typeof statusColors]
-          }`}
-        >
+        <span className={statusClasses[displayStatus] || 'status-badge status-draft'}>
           {displayStatus}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-2 gap-4 mb-5">
         <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Client</p>
-          <p className="text-sm font-mono text-gray-900">
+          <p className="text-xs uppercase tracking-wider font-medium mb-1" style={{ color: 'var(--text-muted)' }}>
+            Client
+          </p>
+          <p className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>
             {formatAddress(invoice.clientAddress)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
-          <p className="text-lg font-bold text-primary">
+          <p className="text-xs uppercase tracking-wider font-medium mb-1" style={{ color: 'var(--text-muted)' }}>
+            Amount
+          </p>
+          <p className="text-lg font-bold" style={{
+            background: 'var(--gradient-primary)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>
             {formatAmount(invoice.amount)} BOT
           </p>
         </div>
       </div>
 
-      <div className="border-t border-gray-100 pt-4 mb-4">
+      <div className="pt-4 mb-5" style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-gray-600">Due Date</span>
-          <span className="font-medium text-gray-900">
+          <span style={{ color: 'var(--text-muted)' }}>Due Date</span>
+          <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>
             {formatDate(invoice.dueDate)}
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Created</span>
-          <span className="font-medium text-gray-900">
+          <span style={{ color: 'var(--text-muted)' }}>Created</span>
+          <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>
             {formatDate(invoice.createdAt)}
           </span>
         </div>
@@ -73,13 +79,13 @@ export const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
       <div className="flex gap-2">
         <Link
           href={`/invoice/${invoice.id}`}
-          className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="btn-primary flex-1 flex items-center justify-center gap-2 text-sm py-2.5"
         >
-          <Eye size={16} />
+          <Eye size={15} />
           View
         </Link>
-        <button className="flex-1 flex items-center justify-center gap-2 bg-gray-100 text-gray-900 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
-          <Download size={16} />
+        <button className="btn-ghost flex-1 flex items-center justify-center gap-2 text-sm py-2.5">
+          <Download size={15} />
           Export
         </button>
       </div>

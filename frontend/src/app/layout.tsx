@@ -1,22 +1,38 @@
 'use client';
 
-import type { Metadata } from 'next';
-import { WagmiProvider, createConfig, http } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WagmiConfig, createConfig, configureChains } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { BOT_CHAIN_NETWORKS } from '@/utils/chains';
 import { Header } from '@/components/Header';
 import './globals.css';
 
-const queryClient = new QueryClient();
+const botChainTestnet = {
+  id: BOT_CHAIN_NETWORKS.testnet.id,
+  name: BOT_CHAIN_NETWORKS.testnet.name,
+  network: 'bot-testnet',
+  nativeCurrency: BOT_CHAIN_NETWORKS.testnet.nativeCurrency,
+  rpcUrls: BOT_CHAIN_NETWORKS.testnet.rpcUrls,
+  blockExplorers: BOT_CHAIN_NETWORKS.testnet.blockExplorers,
+  testnet: true,
+} as const;
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [botChainTestnet],
+  [
+    jsonRpcProvider({
+      rpc: () => ({
+        http: BOT_CHAIN_NETWORKS.testnet.rpcUrls.default.http[0],
+      }),
+    }),
+    publicProvider(),
+  ]
+);
 
 const config = createConfig({
-  chains: [BOT_CHAIN_NETWORKS.testnet as any],
-  transports: {
-    [BOT_CHAIN_NETWORKS.testnet.id]: http(
-      BOT_CHAIN_NETWORKS.testnet.rpcUrls.default.http[0]
-    ),
-  },
+  autoConnect: true,
+  publicClient,
+  webSocketPublicClient,
 });
 
 export default function RootLayout({
@@ -27,13 +43,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            <Header />
-            <main className="min-h-screen bg-background">{children}</main>
-          </QueryClientProvider>
-        </WagmiProvider>
+        <WagmiConfig config={config}>
+          <Header />
+          <main className="min-h-screen bg-background">{children}</main>
+        </WagmiConfig>
       </body>
     </html>
   );
 }
+
