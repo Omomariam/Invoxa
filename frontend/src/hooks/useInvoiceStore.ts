@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { Invoice, PaymentReceipt } from '@/utils/types';
 
 interface InvoiceStore {
@@ -15,7 +16,7 @@ interface InvoiceStore {
   getOverdueInvoices: () => Invoice[];
 }
 
-export const useInvoiceStore = create<InvoiceStore>((set, get) => ({
+export const useInvoiceStore = create<InvoiceStore>()(persist((set, get) => ({
   invoices: [],
   receipts: [],
 
@@ -63,4 +64,8 @@ export const useInvoiceStore = create<InvoiceStore>((set, get) => ({
       (inv) => inv.status !== 'paid' && inv.dueDate < now
     );
   },
+}), {
+  name: 'invoxa-invoices',
+  storage: createJSONStorage(() => localStorage),
+  partialize: (state) => ({ invoices: state.invoices, receipts: state.receipts }),
 }));

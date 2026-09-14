@@ -49,7 +49,7 @@ export default function RootLayout({
       <body>
         <WagmiConfig config={config}>
           <Header />
-          <main className="min-h-screen bg-background">{children}</main>
+          <main className="min-h-[calc(100vh-4rem)]">{children}</main>
         </WagmiConfig>
       </body>
     </html>

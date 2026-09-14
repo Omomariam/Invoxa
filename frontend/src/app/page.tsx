@@ -1,234 +1,112 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
-import { useInvoiceStore } from '@/hooks/useInvoiceStore';
-import { useAccount } from 'wagmi';
-import { InvoiceCard } from '@/components/InvoiceCard';
-import {
-  PlusCircle,
-  TrendingUp,
-  FileText,
-  Clock,
-  AlertTriangle,
-  ArrowRight,
-  Zap,
-  Shield,
-  Globe,
-} from 'lucide-react';
+import { ArrowRight, Check, FileCheck2, FileText, Link2, ShieldCheck } from 'lucide-react';
 
-export default function Dashboard() {
-  const { isConnected } = useAccount();
-  const {
-    invoices,
-    getPaidInvoices,
-    getPendingInvoices,
-    getOverdueInvoices,
-  } = useInvoiceStore();
-
-  const paidInvoices = getPaidInvoices();
-  const pendingInvoices = getPendingInvoices();
-  const overdueInvoices = getOverdueInvoices();
-
-  const totalPaid = paidInvoices.reduce(
-    (sum, inv) => sum + parseFloat(inv.amount),
-    0
-  );
-
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        {/* Hero Section */}
-        <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8"
-                style={{
-                  background: 'rgba(99, 102, 241, 0.1)',
-                  border: '1px solid rgba(99, 102, 241, 0.2)',
-                  color: '#a5b4fc',
-                }}>
-                <Zap size={14} />
-                Powered by BOT Chain
-              </div>
-            </div>
-
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight animate-fade-in-up-delay-1">
-              <span style={{ color: 'var(--text-primary)' }}>Invoice. </span>
-              <span style={{
-                background: 'var(--gradient-primary)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}>
-                Get paid.
-              </span>
-              <br />
-              <span style={{ color: 'var(--text-primary)' }}>Prove it.</span>
-            </h1>
-
-            <p className="text-lg sm:text-xl mb-10 max-w-xl mx-auto animate-fade-in-up-delay-2"
-              style={{ color: 'var(--text-secondary)' }}>
-              Create, send, and track invoices on the blockchain.
-              Transparent payments with cryptographic proof.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay-3">
-              <Link href="/create" className="btn-primary inline-flex items-center justify-center gap-2 text-base px-8 py-3.5">
-                <PlusCircle size={20} />
-                Create Invoice
-              </Link>
-              <Link href="/history" className="btn-secondary inline-flex items-center justify-center gap-2 text-base px-8 py-3.5">
-                View History
-                <ArrowRight size={18} />
-              </Link>
-            </div>
-
-            {/* Feature cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-20 animate-fade-in-up-delay-4">
-              {[
-                { icon: Shield, title: 'On-Chain Proof', desc: 'Every payment is recorded on the blockchain' },
-                { icon: Zap, title: 'Instant Settlement', desc: 'Receive payments directly to your wallet' },
-                { icon: Globe, title: 'Global Access', desc: 'Send invoices to anyone, anywhere' },
-              ].map((feature, i) => (
-                <div key={i} className="glass-card p-6 text-center">
-                  <div className="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center"
-                    style={{ background: 'rgba(99, 102, 241, 0.1)' }}>
-                    <feature.icon size={22} style={{ color: 'var(--accent-primary)' }} />
-                  </div>
-                  <h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>{feature.title}</h3>
-                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{feature.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+export default function LandingPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade-in-up">
-        <div>
-          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
-          <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
-            Manage your invoices and payments
+    <div className="bg-[#f5f6f3]">
+      <section className="page-shell grid min-h-[calc(100vh-4rem)] items-center gap-14 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
+        <div className="max-w-2xl">
+          <p className="mb-5 text-sm font-semibold text-[#0f766e]">On-chain invoicing for independent work</p>
+          <h1 className="max-w-2xl text-5xl font-bold leading-[1.04] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+            Send the invoice. Keep the proof.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-8 text-[#56625c]">
+            Invoxa records every invoice on BOT Chain, giving you and your client one verifiable payment record from issue to settlement.
           </p>
-        </div>
-        <Link href="/create" className="btn-primary inline-flex items-center gap-2 text-sm">
-          <PlusCircle size={18} />
-          New Invoice
-        </Link>
-      </div>
-
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="stat-card accent-indigo animate-fade-in-up-delay-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Total Paid</p>
-              <p className="text-2xl font-bold mt-1" style={{
-                background: 'var(--gradient-primary)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}>
-                {(totalPaid / 1e18).toFixed(2)} BOT
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(99, 102, 241, 0.15)' }}>
-              <TrendingUp size={20} style={{ color: 'var(--accent-primary)' }} />
-            </div>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/dashboard" className="btn-primary px-5">Open Invoxa <ArrowRight size={17} /></Link>
+            <a href="#how-it-works" className="btn-secondary px-5">How it works</a>
           </div>
-        </div>
-
-        <div className="stat-card accent-green animate-fade-in-up-delay-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Total Invoices</p>
-              <p className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
-                {invoices.length}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(16, 185, 129, 0.15)' }}>
-              <FileText size={20} style={{ color: 'var(--accent-success)' }} />
-            </div>
-          </div>
-        </div>
-
-        <div className="stat-card accent-amber animate-fade-in-up-delay-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Pending</p>
-              <p className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
-                {pendingInvoices.length}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(245, 158, 11, 0.15)' }}>
-              <Clock size={20} style={{ color: 'var(--accent-warning)' }} />
-            </div>
-          </div>
-        </div>
-
-        <div className="stat-card accent-red animate-fade-in-up-delay-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Overdue</p>
-              <p className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
-                {overdueInvoices.length}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(239, 68, 68, 0.15)' }}>
-              <AlertTriangle size={20} style={{ color: 'var(--accent-danger)' }} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Invoices */}
-      <div className="animate-fade-in-up-delay-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Recent Invoices
-          </h2>
-          {invoices.length > 0 && (
-            <Link href="/history" className="text-sm font-medium inline-flex items-center gap-1 transition-colors"
-              style={{ color: 'var(--accent-primary)' }}>
-              View all
-              <ArrowRight size={14} />
-            </Link>
-          )}
-        </div>
-
-        {invoices.length === 0 ? (
-          <div className="glass-card p-12 text-center">
-            <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-              style={{ background: 'rgba(99, 102, 241, 0.1)' }}>
-              <FileText size={28} style={{ color: 'var(--accent-primary)' }} />
-            </div>
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-              No invoices yet
-            </h3>
-            <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
-              Create your first invoice to get started
-            </p>
-            <Link href="/create" className="btn-primary inline-flex items-center gap-2 text-sm">
-              <PlusCircle size={16} />
-              Create Invoice
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {invoices.slice(0, 6).map((invoice) => (
-              <InvoiceCard key={invoice.id} invoice={invoice} />
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm text-[#56625c]">
+            {['Wallet-based access', 'BOT Chain verification', 'No custody of funds'].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2"><Check size={15} className="text-[#0f766e]" />{item}</span>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-lg">
+          <div className="absolute -inset-5 rounded-[2rem] border border-[#dfe3dc]" aria-hidden="true" />
+          <div className="panel relative overflow-hidden">
+            <div className="flex items-start justify-between border-b px-6 py-5" style={{ borderColor: 'var(--border)' }}>
+              <div>
+                <p className="text-sm font-semibold">Invoice INV-024</p>
+                <p className="mt-1 text-xs text-[#7b8780]">Recorded on BOT Chain Testnet</p>
+              </div>
+              <span className="status-badge status-pending">Pending</span>
+            </div>
+            <div className="p-6 sm:p-8">
+              <p className="eyebrow">Amount due</p>
+              <p className="mt-2 text-4xl font-bold tracking-tight">2,450.00 <span className="text-base font-medium text-[#7b8780]">BOT</span></p>
+              <dl className="mt-8 divide-y border-y text-sm" style={{ borderColor: 'var(--border)' }}>
+                <div className="flex items-center justify-between py-4"><dt className="text-[#7b8780]">Service</dt><dd className="font-medium">Product design</dd></div>
+                <div className="flex items-center justify-between py-4"><dt className="text-[#7b8780]">Due</dt><dd className="font-medium">24 Sep 2026</dd></div>
+                <div className="flex items-center justify-between py-4"><dt className="text-[#7b8780]">On-chain ID</dt><dd className="font-mono text-xs">#1842</dd></div>
+              </dl>
+              <div className="mt-6 flex items-center gap-3 rounded-lg bg-[#e8f5ed] px-4 py-3 text-sm font-medium text-[#16794b]">
+                <ShieldCheck size={18} /> Creation transaction confirmed
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="product" className="border-y bg-white" style={{ borderColor: 'var(--border)' }}>
+        <div className="page-shell py-20 sm:py-24">
+          <div className="max-w-2xl">
+            <p className="eyebrow">The product</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">A payment record both sides can verify.</h2>
+            <p className="mt-4 text-base leading-7 text-[#66716b]">The invoice terms, status, and payment trail live together instead of being scattered across email, spreadsheets, and wallet history.</p>
+          </div>
+          <div className="mt-12 grid gap-px overflow-hidden rounded-xl border bg-[#dfe3dc] md:grid-cols-3" style={{ borderColor: 'var(--border)' }}>
+            {[
+              { icon: FileText, title: 'Issue with certainty', copy: 'Set the client wallet, amount, terms, and due date. The invoice is created only after the network confirms it.' },
+              { icon: Link2, title: 'Share one record', copy: 'Send a direct invoice link or QR code. The client sees the same payment request you issued.' },
+              { icon: FileCheck2, title: 'Retain the receipt', copy: 'Creation and payment transactions link back to the BOT Chain explorer for independent verification.' },
+            ].map(({ icon: Icon, title, copy }) => (
+              <article key={title} className="bg-white p-7 sm:p-8">
+                <Icon size={22} className="text-[#0f766e]" />
+                <h3 className="mt-5 text-lg font-semibold">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#66716b]">{copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="page-shell py-20 sm:py-24">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <p className="eyebrow">How it works</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">From terms to transaction in three steps.</h2>
+          </div>
+          <ol className="divide-y border-y" style={{ borderColor: 'var(--border)' }}>
+            {[
+              ['01', 'Connect your wallet', 'Your wallet identifies the issuer and will receive payment directly.'],
+              ['02', 'Create the invoice', 'Review the terms, approve the transaction, and wait for BOT Chain confirmation.'],
+              ['03', 'Send it to your client', 'Share the confirmed invoice link and track its payment status.'],
+            ].map(([number, title, copy]) => (
+              <li key={number} className="grid gap-3 py-6 sm:grid-cols-[4rem_1fr]">
+                <span className="font-mono text-sm font-semibold text-[#0f766e]">{number}</span>
+                <div><h3 className="font-semibold">{title}</h3><p className="mt-1 text-sm leading-6 text-[#66716b]">{copy}</p></div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="bg-[#17201c] text-white">
+        <div className="page-shell flex flex-col items-start justify-between gap-8 py-16 sm:flex-row sm:items-center">
+          <div><h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Ready to issue your first invoice?</h2><p className="mt-2 text-sm text-[#b7c0bb]">Connect a wallet and record it on BOT Chain.</p></div>
+          <Link href="/create" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-semibold text-[#17201c] transition-colors hover:bg-[#e8ebe7]">Create an invoice <ArrowRight size={17} /></Link>
+        </div>
+      </section>
+
+      <footer className="border-t bg-white" style={{ borderColor: 'var(--border)' }}>
+        <div className="page-shell flex flex-col gap-3 py-7 text-sm text-[#66716b] sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-semibold text-[#17201c]">Invoxa</p>
+          <p>Invoice records for BOT Chain.</p>
+        </div>
+      </footer>
     </div>
   );
 }

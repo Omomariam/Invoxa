@@ -126,7 +126,7 @@ invoxa/
 
 ### contracts/.env
 ```
-PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb476cadccb1da9263578f84dd8ff
+PRIVATE_KEY=
 TESTNET_RPC=https://rpc.bohr.life
 MAINNET_RPC=https://rpc.botchain.ai
 BLOCKSCOUT_API_KEY=your_api_key

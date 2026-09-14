@@ -1,69 +1,98 @@
 'use client';
 
-import React from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useAccount, useConnect } from 'wagmi';
+import { FileText, Loader2, Plus, Search, Wallet } from 'lucide-react';
 import { useInvoiceStore } from '@/hooks/useInvoiceStore';
 import { InvoiceCard } from '@/components/InvoiceCard';
-import { useAccount } from 'wagmi';
-import { AlertCircle, FileText, PlusCircle } from 'lucide-react';
+import { isOverdue } from '@/utils/formatting';
+
+const filters = ['all', 'pending', 'paid', 'overdue'] as const;
+type Filter = typeof filters[number];
 
 export default function History() {
   const { isConnected } = useAccount();
+  const { connect, connectors, isLoading: isConnecting } = useConnect();
   const { invoices } = useInvoiceStore();
+  const [filter, setFilter] = useState<Filter>('all');
+  const [query, setQuery] = useState('');
+
+  const visibleInvoices = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    return invoices.filter((invoice) => {
+      const status = isOverdue(invoice.dueDate, invoice.status) ? 'overdue' : invoice.status;
+      const matchesFilter = filter === 'all' || status === filter;
+      const matchesQuery = !normalizedQuery || [invoice.invoiceNumber, invoice.description, invoice.clientAddress].some((value) => value.toLowerCase().includes(normalizedQuery));
+      return matchesFilter && matchesQuery;
+    });
+  }, [filter, invoices, query]);
+
+  const handleConnect = () => {
+    const injected = connectors.find((connector) => connector.id === 'injected') || connectors[0];
+    if (injected) connect({ connector: injected });
+  };
 
   if (!isConnected) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="glass-card p-12 text-center max-w-md mx-auto animate-fade-in-up">
-          <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-            style={{ background: 'rgba(245, 158, 11, 0.1)' }}>
-            <AlertCircle size={28} style={{ color: 'var(--accent-warning)' }} />
-          </div>
-          <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-            Wallet Required
-          </h2>
-          <p style={{ color: 'var(--text-muted)' }}>
-            Please connect your wallet to view invoice history
-          </p>
+      <div className="page-shell flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <div className="panel max-w-md p-8 text-center">
+          <Wallet size={24} className="mx-auto text-[#56625c]" />
+          <h1 className="mt-4 text-xl font-bold">Connect a wallet to view invoices</h1>
+          <p className="mt-2 text-sm leading-6 text-[#66716b]">Invoice history is loaded for the currently connected address.</p>
+          <button onClick={handleConnect} disabled={isConnecting} className="btn-primary mt-6 w-full">
+            {isConnecting ? <Loader2 size={16} className="animate-spin" /> : <Wallet size={16} />}
+            {isConnecting ? 'Connecting' : 'Connect wallet'}
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8 animate-fade-in-up">
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-          Invoice History
-        </h1>
-        <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
-          View all your invoices ({invoices.length})
-        </p>
+    <div className="page-shell">
+      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div>
+          <p className="eyebrow">Records</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight">Invoices</h1>
+          <p className="mt-2 text-sm text-[#66716b]">{invoices.length} {invoices.length === 1 ? 'invoice' : 'invoices'} in this wallet.</p>
+        </div>
+        <Link href="/create" className="btn-primary"><Plus size={17} /> New invoice</Link>
       </div>
 
       {invoices.length === 0 ? (
-        <div className="glass-card p-16 text-center animate-fade-in-up-delay-1">
-          <div className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center"
-            style={{ background: 'rgba(99, 102, 241, 0.1)' }}>
-            <FileText size={36} style={{ color: 'var(--accent-primary)' }} />
-          </div>
-          <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            No invoices yet
-          </h3>
-          <p className="mb-8 max-w-sm mx-auto" style={{ color: 'var(--text-muted)' }}>
-            Your invoice history will appear here once you create your first invoice
-          </p>
-          <Link href="/create" className="btn-primary inline-flex items-center gap-2">
-            <PlusCircle size={18} />
-            Create Your First Invoice
-          </Link>
+        <div className="panel mt-8 flex flex-col items-center px-6 py-16 text-center">
+          <FileText size={25} className="text-[#7b8780]" />
+          <h2 className="mt-4 font-semibold">No invoices found</h2>
+          <p className="mt-1 max-w-sm text-sm text-[#7b8780]">Invoices created from this wallet will appear here.</p>
+          <Link href="/create" className="btn-secondary mt-5"><Plus size={16} /> Create invoice</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up-delay-1">
-          {invoices.map((invoice) => (
-            <InvoiceCard key={invoice.id} invoice={invoice} />
-          ))}
-        </div>
+        <>
+          <div className="mt-8 flex flex-col gap-3 border-b pb-5 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: 'var(--border)' }}>
+            <div className="flex gap-1 overflow-x-auto" role="group" aria-label="Filter invoices">
+              {filters.map((item) => (
+                <button key={item} onClick={() => setFilter(item)} className={`rounded-md px-3 py-2 text-sm font-medium capitalize transition-colors ${filter === item ? 'bg-[#17201c] text-white' : 'text-[#66716b] hover:bg-white'}`}>{item}</button>
+              ))}
+            </div>
+            <label className="relative block sm:w-64">
+              <span className="sr-only">Search invoices</span>
+              <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#7b8780]" />
+              <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search invoices" className="input-field pl-9" />
+            </label>
+          </div>
+
+          {visibleInvoices.length > 0 ? (
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {visibleInvoices.map((invoice) => <InvoiceCard key={invoice.id} invoice={invoice} />)}
+            </div>
+          ) : (
+            <div className="py-16 text-center">
+              <p className="font-medium">No matching invoices</p>
+              <p className="mt-1 text-sm text-[#7b8780]">Try a different search or status.</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

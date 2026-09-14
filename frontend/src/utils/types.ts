@@ -1,5 +1,8 @@
 export interface Invoice {
   id: string;
+  onChainId?: string;
+  chainId?: number;
+  issuerAddress?: string;
   clientAddress: string;
   description: string;
   amount: string;
@@ -8,6 +11,7 @@ export interface Invoice {
   invoiceNumber: string;
   createdAt: number;
   paidAt?: number;
+  creationTransactionHash?: string;
   transactionHash?: string;
 }
 
