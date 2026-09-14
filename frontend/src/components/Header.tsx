@@ -2,13 +2,22 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { formatAddress } from '@/utils/formatting';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X, Zap, Wallet, LogOut, Loader2 } from 'lucide-react';
 
 export const Header = () => {
   const { address, isConnected } = useAccount();
+  const { connect, connectors, isLoading: isConnecting } = useConnect();
+  const { disconnect } = useDisconnect();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleConnect = () => {
+    const injected = connectors.find((c) => c.id === 'injected') || connectors[0];
+    if (injected) {
+      connect({ connector: injected });
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 glass-card-static" style={{ borderRadius: 0, borderTop: 'none', borderLeft: 'none', borderRight: 'none' }}>
@@ -53,35 +62,68 @@ export const Header = () => {
             ))}
           </nav>
 
-          {/* Wallet Status */}
+          {/* Wallet & Connect */}
           <div className="flex items-center gap-3">
             {isConnected && address ? (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
-                style={{
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
-                }}>
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent-success)' }} />
-                <span className="text-sm font-mono font-medium" style={{ color: '#34d399' }}>
-                  {formatAddress(address)}
-                </span>
+              <div className="flex items-center gap-2">
+                {/* Connected wallet display */}
+                <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl"
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                  }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent-success)' }} />
+                  <span className="text-sm font-mono font-medium" style={{ color: '#34d399' }}>
+                    {formatAddress(address)}
+                  </span>
+                </div>
+                {/* Disconnect button */}
+                <button
+                  onClick={() => disconnect()}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200"
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.15)',
+                    color: '#f87171',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.15)';
+                  }}
+                  title="Disconnect wallet"
+                >
+                  <LogOut size={15} />
+                  <span className="hidden sm:inline">Disconnect</span>
+                </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
-                style={{
-                  background: 'rgba(245, 158, 11, 0.1)',
-                  border: '1px solid rgba(245, 158, 11, 0.2)',
-                }}>
-                <div className="w-2 h-2 rounded-full" style={{ background: 'var(--accent-warning)' }} />
-                <span className="text-sm font-medium" style={{ color: '#fbbf24' }}>
-                  Not Connected
-                </span>
-              </div>
+              <button
+                onClick={handleConnect}
+                disabled={isConnecting}
+                className="btn-primary flex items-center gap-2 text-sm py-2 px-4 disabled:opacity-60"
+              >
+                {isConnecting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span className="hidden sm:inline">Connecting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Wallet size={16} />
+                    <span className="hidden sm:inline">Connect Wallet</span>
+                    <span className="sm:hidden">Connect</span>
+                  </>
+                )}
+              </button>
             )}
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-2 rounded-lg"
+              className="md:hidden p-2 rounded-lg transition-colors"
               style={{ color: 'var(--text-secondary)' }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >

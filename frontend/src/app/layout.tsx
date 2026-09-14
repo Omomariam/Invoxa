@@ -1,6 +1,7 @@
 'use client';
 
 import { WagmiConfig, createConfig, configureChains } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { BOT_CHAIN_NETWORKS } from '@/utils/chains';
@@ -31,6 +32,9 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 const config = createConfig({
   autoConnect: true,
+  connectors: [
+    new InjectedConnector({ chains }),
+  ],
   publicClient,
   webSocketPublicClient,
 });
