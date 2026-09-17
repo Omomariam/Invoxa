@@ -101,12 +101,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t bg-white" style={{ borderColor: 'var(--border)' }}>
-        <div className="page-shell flex flex-col gap-3 py-7 text-sm text-[#66716b] sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-semibold text-[#17201c]">Invoxa</p>
-          <p>Invoice records for BOT Chain.</p>
-        </div>
-      </footer>
     </div>
   );
 }

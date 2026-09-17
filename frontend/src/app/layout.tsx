@@ -6,6 +6,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { BOT_CHAIN_NETWORKS } from '@/utils/chains';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import './globals.css';
 
 const botChainTestnet = {
@@ -50,6 +51,7 @@ export default function RootLayout({
         <WagmiConfig config={config}>
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+          <Footer />
         </WagmiConfig>
       </body>
     </html>
