@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useConnection, useConnect, useConnectors, useDisconnect } from 'wagmi';
 import { ArrowRight, FileText, Loader2, Menu, Wallet, X } from 'lucide-react';
+import { DEFAULT_CHAIN, CONFIG_ERROR } from '@/utils/chains';
 import { formatAddress } from '@/utils/formatting';
 
 const appLinks = [
@@ -21,9 +22,10 @@ const landingLinks = [
 export const Header = () => {
   const pathname = usePathname();
   const isLanding = pathname === '/';
-  const { address, isConnected } = useAccount();
-  const { connect, connectors, isLoading: isConnecting } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { address, isConnected } = useConnection();
+  const { mutate: connect, isPending: isConnecting } = useConnect();
+  const connectors = useConnectors();
+  const { mutate: disconnect } = useDisconnect();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleConnect = () => {
@@ -58,6 +60,7 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <span className="hidden text-xs sm:inline">{DEFAULT_CHAIN.name}</span>
           {isLanding ? (
             <Link href="/dashboard" className="btn-primary">Open app <ArrowRight size={16} /></Link>
           ) : isConnected && address ? (
@@ -91,6 +94,7 @@ export const Header = () => {
           ))}
         </nav>
       )}
+    {CONFIG_ERROR && <p role="alert" className="bg-red-50 px-4 py-2 text-sm text-red-700">{CONFIG_ERROR}</p>}
     </header>
   );
 };

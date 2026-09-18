@@ -77,6 +77,11 @@ contract Invoxa is Ownable, ReentrancyGuard {
         uint256 indexed invoiceId
     );
 
+    modifier invoiceExists(uint256 invoiceId) {
+        require(invoiceId < invoiceCounter, "Invoice does not exist");
+        _;
+    }
+
     // Constructor
     constructor() Ownable(msg.sender) {}
 
@@ -129,7 +134,7 @@ contract Invoxa is Ownable, ReentrancyGuard {
     /**
      * @dev Pay an invoice
      */
-    function payInvoice(uint256 _invoiceId) external payable nonReentrant {
+    function payInvoice(uint256 _invoiceId) external payable nonReentrant invoiceExists(_invoiceId) {
         Invoice storage invoice = invoices[_invoiceId];
 
         require(
@@ -172,7 +177,7 @@ contract Invoxa is Ownable, ReentrancyGuard {
     /**
      * @dev Cancel an invoice (only issuer)
      */
-    function cancelInvoice(uint256 _invoiceId) external {
+    function cancelInvoice(uint256 _invoiceId) external invoiceExists(_invoiceId) {
         Invoice storage invoice = invoices[_invoiceId];
 
         require(msg.sender == invoice.issuer, "Only issuer can cancel");
@@ -192,6 +197,7 @@ contract Invoxa is Ownable, ReentrancyGuard {
     function getInvoice(uint256 _invoiceId)
         external
         view
+        invoiceExists(_invoiceId)
         returns (
             address issuer,
             address client,
@@ -261,7 +267,7 @@ contract Invoxa is Ownable, ReentrancyGuard {
     /**
      * @dev Check if invoice is overdue
      */
-    function isOverdue(uint256 _invoiceId) external view returns (bool) {
+    function isOverdue(uint256 _invoiceId) external view invoiceExists(_invoiceId) returns (bool) {
         Invoice storage invoice = invoices[_invoiceId];
         return (invoice.status == InvoiceStatus.Pending &&
             block.timestamp > invoice.dueDate);

@@ -11,6 +11,7 @@ const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.20",
     settings: {
+      evmVersion: "paris",
       optimizer: {
         enabled: true,
         runs: 200,
@@ -31,8 +32,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      "botchain-testnet": process.env.BLOCKSCOUT_API_KEY || "",
-      "botchain-mainnet": process.env.BLOCKSCOUT_API_KEY || "",
+      "botchain-testnet": process.env.BLOCKSCOUT_API_KEY || "unused",
+      "botchain-mainnet": process.env.BLOCKSCOUT_API_KEY || "unused",
     },
     customChains: [
       {

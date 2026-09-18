@@ -2,12 +2,13 @@ export interface Invoice {
   id: string;
   onChainId?: string;
   chainId?: number;
+  contractAddress?: string;
   issuerAddress?: string;
   clientAddress: string;
   description: string;
   amount: string;
   dueDate: number;
-  status: 'draft' | 'pending' | 'paid' | 'overdue';
+  status: 'draft' | 'pending' | 'paid' | 'overdue' | 'cancelled';
   invoiceNumber: string;
   createdAt: number;
   paidAt?: number;

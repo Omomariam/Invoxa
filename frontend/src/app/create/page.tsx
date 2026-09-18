@@ -2,21 +2,20 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useConnection, useConnect, useConnectors, useSwitchChain } from 'wagmi';
 import { AlertCircle, ArrowLeft, CheckCircle2, Loader2, Wallet } from 'lucide-react';
-import { useInvoiceStore } from '@/hooks/useInvoiceStore';
 import { useInvoiceContract } from '@/hooks/useInvoiceContract';
-import { BOT_CHAIN_NETWORKS } from '@/utils/chains';
+import { DEFAULT_CHAIN, invoiceUrl } from '@/utils/chains';
 import { InvoiceFormData } from '@/utils/types';
 import { isValidAddress, parseAmount } from '@/utils/formatting';
 
 export default function CreateInvoice() {
   const router = useRouter();
-  const { address, isConnected } = useAccount();
-  const { connect, connectors, isLoading: isConnecting } = useConnect();
-  const { chain } = useNetwork();
-  const { switchNetworkAsync } = useSwitchNetwork();
-  const { addInvoice } = useInvoiceStore();
+  const { address, isConnected } = useConnection();
+  const { mutate: connect, isPending: isConnecting } = useConnect();
+  const connectors = useConnectors();
+  const { chainId } = useConnection();
+  const { mutateAsync: switchNetworkAsync } = useSwitchChain();
   const { createInvoiceOnChain, loading: contractLoading, error: contractError, transactionHash } = useInvoiceContract();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -64,9 +63,9 @@ export default function CreateInvoice() {
       const now = Math.floor(Date.now() / 1000);
       if (dueDate <= now) return setError('Choose a future due date.');
 
-      if (chain?.id !== BOT_CHAIN_NETWORKS.testnet.id) {
-        if (!switchNetworkAsync) throw new Error('Switch your wallet to BOT Chain Testnet and try again.');
-        await switchNetworkAsync(BOT_CHAIN_NETWORKS.testnet.id);
+      if (chainId !== DEFAULT_CHAIN.id) {
+        if (!switchNetworkAsync) throw new Error('Switch your wallet to the configured BOT Chain network and try again.');
+        await switchNetworkAsync({ chainId: DEFAULT_CHAIN.id });
       }
 
       const amount = parseAmount(formData.amount);
@@ -79,22 +78,7 @@ export default function CreateInvoice() {
       );
       if (!result) return;
 
-      const invoice = {
-        id: `chain_${result.invoiceId.toString()}`,
-        onChainId: result.invoiceId.toString(),
-        chainId: BOT_CHAIN_NETWORKS.testnet.id,
-        issuerAddress: address,
-        clientAddress: formData.clientAddress,
-        description: formData.description.trim(),
-        amount,
-        dueDate,
-        status: 'pending' as const,
-        invoiceNumber: formData.invoiceNumber.trim(),
-        createdAt: now,
-        creationTransactionHash: result.hash,
-      };
-      addInvoice(invoice);
-      router.push(`/invoice/${invoice.id}`);
+      router.push(invoiceUrl(result.invoiceId.toString()));
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : 'The invoice could not be created.');
     } finally {
@@ -123,7 +107,7 @@ export default function CreateInvoice() {
 
           <div className="flex gap-3 rounded-lg border border-[#bcdcc9] bg-[#f2faf5] p-4 text-sm text-[#315d45]">
             <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
-            <span>This invoice will be written to BOT Chain Testnet. Your wallet will ask you to approve the network transaction and fee.</span>
+            <span>This invoice will be written to {DEFAULT_CHAIN.name}. Descriptions and invoice numbers are public and permanent. Your wallet will ask you to approve the network transaction and fee.</span>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">

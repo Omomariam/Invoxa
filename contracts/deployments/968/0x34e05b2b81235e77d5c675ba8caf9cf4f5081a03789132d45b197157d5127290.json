@@ -1,0 +1,35 @@
+{
+  "network": "botchain-testnet",
+  "chainId": "968",
+  "address": "0x0aDac89c674fCf7Fcf7938aAEdAd78586aDFf0e4",
+  "deployer": "0x757e39550f2669bE84c1F1F642669727212F3bE3",
+  "transactionHash": "0x34e05b2b81235e77d5c675ba8caf9cf4f5081a03789132d45b197157d5127290",
+  "deploymentBlock": 23846712,
+  "timestamp": 1789743450,
+  "sourceRevision": "825d779cbddc6194f5542d364a5a9b779ccf28b1",
+  "sourceDirty": true,
+  "artifactHash": "0xdfe5ed207277f83f64aedd636fde0a7716e0ca02dfca3145780c8777440d854f",
+  "runtimeHash": "0xd2183c41012c5c259c0e45bb88b4ab3ea565006f55e4af70ef26e0b0936a6737",
+  "compiler": "0.8.20+commit.a1b79de6",
+  "settings": {
+    "evmVersion": "paris",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    }
+  }
+}

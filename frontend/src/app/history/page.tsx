@@ -2,19 +2,20 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useAccount, useConnect } from 'wagmi';
+import { useConnection, useConnect, useConnectors } from 'wagmi';
 import { FileText, Loader2, Plus, Search, Wallet } from 'lucide-react';
-import { useInvoiceStore } from '@/hooks/useInvoiceStore';
+import { useAccountInvoices } from '@/hooks/useAccountInvoices';
 import { InvoiceCard } from '@/components/InvoiceCard';
 import { isOverdue } from '@/utils/formatting';
 
-const filters = ['all', 'pending', 'paid', 'overdue'] as const;
+const filters = ['all', 'pending', 'paid', 'overdue', 'cancelled'] as const;
 type Filter = typeof filters[number];
 
 export default function History() {
-  const { isConnected } = useAccount();
-  const { connect, connectors, isLoading: isConnecting } = useConnect();
-  const { invoices } = useInvoiceStore();
+  const { isConnected } = useConnection();
+  const { mutate: connect, isPending: isConnecting } = useConnect();
+  const connectors = useConnectors();
+  const { invoices, loading, error } = useAccountInvoices();
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
 
@@ -51,6 +52,8 @@ export default function History() {
 
   return (
     <div className="page-shell">
+      {loading && <p role="status">Refreshing invoices from the blockchain...</p>}
+      {error && <p role="alert" className="text-red-700">{error}</p>}
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="eyebrow">Records</p>

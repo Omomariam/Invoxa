@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { CONTRACT_ADDRESS, DEFAULT_CHAIN } from '@/utils/chains';
 import { Invoice, PaymentReceipt } from '@/utils/types';
 
 interface InvoiceStore {
@@ -61,11 +62,11 @@ export const useInvoiceStore = create<InvoiceStore>()(persist((set, get) => ({
   getOverdueInvoices: () => {
     const now = Date.now() / 1000;
     return get().invoices.filter(
-      (inv) => inv.status !== 'paid' && inv.dueDate < now
+      (inv) => inv.status === 'pending' && inv.dueDate < now
     );
   },
 }), {
-  name: 'invoxa-invoices',
+  name: `invoxa-drafts:${DEFAULT_CHAIN.id}:${CONTRACT_ADDRESS.toLowerCase()}`,
   storage: createJSONStorage(() => localStorage),
   partialize: (state) => ({ invoices: state.invoices, receipts: state.receipts }),
 }));

@@ -1,16 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { useAccount, useConnect } from 'wagmi';
+import { useConnection, useConnect, useConnectors } from 'wagmi';
 import { ArrowRight, FileCheck2, Loader2, Plus, Wallet } from 'lucide-react';
-import { useInvoiceStore } from '@/hooks/useInvoiceStore';
+import { useAccountInvoices } from '@/hooks/useAccountInvoices';
 import { InvoiceCard } from '@/components/InvoiceCard';
 import { formatAmount } from '@/utils/formatting';
 
 export default function Dashboard() {
-  const { isConnected } = useAccount();
-  const { connect, connectors, isLoading: isConnecting } = useConnect();
-  const { invoices, getPaidInvoices, getPendingInvoices, getOverdueInvoices } = useInvoiceStore();
+  const { isConnected } = useConnection();
+  const { mutate: connect, isPending: isConnecting } = useConnect();
+  const connectors = useConnectors();
+  const { invoices, loading, error, getPaidInvoices, getPendingInvoices, getOverdueInvoices } = useAccountInvoices();
   const paid = getPaidInvoices();
   const pending = getPendingInvoices();
   const overdue = getOverdueInvoices();
@@ -45,6 +46,8 @@ export default function Dashboard() {
 
   return (
     <div className="page-shell">
+      {loading && <p role="status">Refreshing invoices from the blockchain...</p>}
+      {error && <p role="alert" className="text-red-700">{error}</p>}
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="eyebrow">Workspace</p>

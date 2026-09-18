@@ -1,0 +1,12 @@
+{
+  "chainId": 968,
+  "contract": "0x0aDac89c674fCf7Fcf7938aAEdAd78586aDFf0e4",
+  "issuer": "0x757e39550f2669bE84c1F1F642669727212F3bE3",
+  "client": "0x12d487f69d5d981256C414CA374b68B3240B7c20",
+  "invoiceId": "0",
+  "amount": "1000000000000000",
+  "creation": "0x8f975c39d1e0828a3911e7de60f380300a7839a083b5412b1f9f0f8d8b3640ab",
+  "payment": "0xaff7e671b835246373af7b83dab609b8c75f6a2f9a6e83ae1f43c2fd10f30937",
+  "cancelledInvoiceId": "1",
+  "cancellation": "0xc0e0bd99bd368f3656ea714efad638c27ab52039febd5075a31fd5ff3707faee"
+}

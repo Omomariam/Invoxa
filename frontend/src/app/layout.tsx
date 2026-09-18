@@ -1,43 +1,19 @@
 'use client';
 
-import { WagmiConfig, createConfig, configureChains } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
-import { publicProvider } from 'wagmi/providers/public';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { BOT_CHAIN_NETWORKS } from '@/utils/chains';
+import { WagmiProvider, createConfig, http } from 'wagmi';
+import { injected } from 'wagmi/connectors/injected';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
+import { DEFAULT_CHAIN } from '@/utils/chains';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import './globals.css';
 
-const botChainTestnet = {
-  id: BOT_CHAIN_NETWORKS.testnet.id,
-  name: BOT_CHAIN_NETWORKS.testnet.name,
-  network: 'bot-testnet',
-  nativeCurrency: BOT_CHAIN_NETWORKS.testnet.nativeCurrency,
-  rpcUrls: BOT_CHAIN_NETWORKS.testnet.rpcUrls,
-  blockExplorers: BOT_CHAIN_NETWORKS.testnet.blockExplorers,
-  testnet: true,
-} as const;
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [botChainTestnet],
-  [
-    jsonRpcProvider({
-      rpc: () => ({
-        http: BOT_CHAIN_NETWORKS.testnet.rpcUrls.default.http[0],
-      }),
-    }),
-    publicProvider(),
-  ]
-);
-
 const config = createConfig({
-  autoConnect: true,
-  connectors: [
-    new InjectedConnector({ chains }),
-  ],
-  publicClient,
-  webSocketPublicClient,
+  chains: [DEFAULT_CHAIN],
+  connectors: [injected()],
+  transports: { [DEFAULT_CHAIN.id]: http(DEFAULT_CHAIN.rpcUrls.default.http[0]) },
+  ssr: true,
 });
 
 export default function RootLayout({
@@ -45,14 +21,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <html lang="en">
       <body>
-        <WagmiConfig config={config}>
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
-        </WagmiConfig>
+          </QueryClientProvider>
+        </WagmiProvider>
       </body>
     </html>
   );

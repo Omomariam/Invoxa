@@ -9,7 +9,9 @@
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network botchain-mainnet",
     "verify:testnet": "hardhat verify --network botchain-testnet",
     "verify:mainnet": "hardhat verify --network botchain-mainnet",
-    "gas-report": "REPORT_GAS=true hardhat test"
+    "gas-report": "REPORT_GAS=true hardhat test",
+    "preflight:mainnet": "hardhat run scripts/check-deployment.ts --network botchain-mainnet",
+    "preflight:testnet": "hardhat run scripts/check-deployment.ts --network botchain-testnet"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",

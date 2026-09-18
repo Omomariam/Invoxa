@@ -27,6 +27,7 @@ export const formatAmount = (amount: string, decimals: number = 18): string => {
  * Parse amount string to wei
  */
 export const parseAmount = (amount: string, decimals: number = 18): string => {
+  if (!new RegExp(`^\\d+(?:\\.\\d{1,${decimals}})?$`).test(amount)) throw new Error('Enter a valid amount with at most 18 decimals.');
   const [whole, decimal] = amount.split('.');
   const decimalPart = (decimal || '').padEnd(decimals, '0');
   return (whole + decimalPart).replace(/^0+/, '') || '0';
@@ -47,7 +48,7 @@ export const formatDate = (timestamp: number): string => {
  * Check if invoice is overdue
  */
 export const isOverdue = (dueDate: number, status: string): boolean => {
-  return status !== 'paid' && Date.now() > dueDate * 1000;
+  return status === 'pending' && Date.now() > dueDate * 1000;
 };
 
 /**

@@ -1,2 +1,66 @@
-.env
-.env.example
+# Private environment files; publish sanitized setup templates only.
+.env*
+*.env
+*.env.*
+!.env.example
+!.env.*.example
+.npmrc
+
+# Private credentials and local secrets.
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+id_ed25519*
+secrets/
+keystore/
+
+# Dependencies, generated code, build outputs, and caches.
+node_modules/
+.next/
+out/
+dist/
+build/
+cache/
+artifacts/
+typechain/
+typechain-types/
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+.nyc_output/
+.turbo/
+.vercel/
+.netlify/
+/contracts/flattened-*.sol
+/contracts/deployments/**/*.build.json
+
+# Logs, temporary files, and machine/editor state.
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+
+# Local planning, historical status reports, and presentation material.
+/ImplementationPlan.md
+/Acunetix BOTChain Integration Guide.md
+/PROJECT_STATUS.md
+/README_DEPLOYMENT_STATUS.md
+/DEPLOYMENT_SUCCESS.md
+/Invoxa_Pitch_Deck.pdf
+
+# Accidental empty CLI output files.
+/frontend/next
+/frontend/invoxa-frontend@*

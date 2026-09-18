@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 import { Invoxa } from "../typechain-types";
 
@@ -19,7 +20,7 @@ describe("Invoxa", function () {
   describe("Invoice Creation", function () {
     it("Should create an invoice", async function () {
       const amount = ethers.parseEther("10");
-      const dueDate = Math.floor(Date.now() / 1000) + 86400; // 1 day from now
+      const dueDate = await time.latest() + 86400; // 1 day from now
 
       const tx = await invoxa.createInvoice(
         client.address,
@@ -38,7 +39,7 @@ describe("Invoxa", function () {
 
     it("Should revert if client address is zero", async function () {
       const amount = ethers.parseEther("10");
-      const dueDate = Math.floor(Date.now() / 1000) + 86400;
+      const dueDate = await time.latest() + 86400;
 
       await expect(
         invoxa.createInvoice(
@@ -52,7 +53,7 @@ describe("Invoxa", function () {
     });
 
     it("Should revert if amount is zero", async function () {
-      const dueDate = Math.floor(Date.now() / 1000) + 86400;
+      const dueDate = await time.latest() + 86400;
 
       await expect(
         invoxa.createInvoice(
@@ -72,7 +73,7 @@ describe("Invoxa", function () {
 
     beforeEach(async function () {
       amount = ethers.parseEther("10");
-      const dueDate = Math.floor(Date.now() / 1000) + 86400;
+      const dueDate = await time.latest() + 86400;
 
       const tx = await invoxa.createInvoice(
         client.address,
@@ -109,7 +110,7 @@ describe("Invoxa", function () {
 
     beforeEach(async function () {
       const amount = ethers.parseEther("10");
-      const dueDate = Math.floor(Date.now() / 1000) + 86400;
+      const dueDate = await time.latest() + 86400;
 
       const tx = await invoxa.createInvoice(
         client.address,

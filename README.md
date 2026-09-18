@@ -26,7 +26,6 @@ Invoxa/
 │   ├── hardhat.config.ts
 │   ├── package.json
 │   └── .env.example
-├── Acunetix BOTChain Integration Guide.md
 └── README.md
 ```
 
@@ -176,7 +175,7 @@ Invoxa/
 
 ## Security
 
-All core contracts are professionally audited by CertiK:
+The following BOT Chain ecosystem audit reports do not establish an audit of Invoxa. Invoxa requires its own contract review before public release:
 - [BOT Chain Audit Report](https://www.botchain.ai/docs/Chain.pdf)
 - [BOT DEX Audit Report](https://dex.botchain.ai/docs/Dex-Audit-Report.pdf)
 - [BOT Bridge Audit Report](https://bridge.botchain.ai/docs/Bridge-Audit-Report.pdf)
@@ -240,3 +239,7 @@ For assistance during integration, please contact the BOT Chain team through the
 ---
 
 **Built with ❤️ for the BOT Chain ecosystem**
+
+## Mainnet release
+
+Follow [MAINNET_DEPLOYMENT.md](MAINNET_DEPLOYMENT.md) for preflight, deployment, configuration, smoke tests, and recovery. Older readiness reports describe historical testnet work.
