@@ -54,6 +54,7 @@ Desktop.ini
 .vscode/
 
 # Local planning, historical status reports, and presentation material.
+/exports/
 /ImplementationPlan.md
 /Acunetix BOTChain Integration Guide.md
 /PROJECT_STATUS.md
